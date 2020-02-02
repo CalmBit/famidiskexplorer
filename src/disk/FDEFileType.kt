@@ -2,7 +2,14 @@ package disk
 
 import util.FDEUByteHelper
 
-class FDEFileType(code: UByte) {
+class FDEFileType(val code: UByte) {
+
+    override fun toString()  = when (code) {
+        FDEUByteHelper.ZERO -> "PRG"
+        FDEUByteHelper.ONE -> "CHR"
+        FDEUByteHelper.TWO -> "VRAM"
+        else -> "Unknown (0x${String.format("%02x", code.toInt())})"
+    }
 
     companion object {
         var PROGRAM = FDEFileType(0x00u)

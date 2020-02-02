@@ -4,7 +4,17 @@ import util.ByteParseStream
 import util.FDEUByteHelper
 
 class FDEGarbageSide : FDEDiskSide() {
-    var data: UByteArray = ubyteArrayOf()
+    var pile = FDEGarbagePile()
+
+    override fun toString() = "(unrecognized content block)"
+
+    class FDEGarbagePile {
+        var data: UByteArray = ubyteArrayOf()
+
+        override fun toString(): String {
+            return "${data.size} bytes"
+        }
+    }
 
     companion object {
         fun parseFromBytes(stream: ByteParseStream): FDEGarbageSide {
@@ -18,7 +28,7 @@ class FDEGarbageSide : FDEDiskSide() {
                 // we'll just handle it upstream
             }
 
-            garb.data = stream.getRange(original, stream.getPosition() - 1)
+            garb.pile.data = stream.getRange(original, stream.getPosition() - 1)
             return garb
         }
     }

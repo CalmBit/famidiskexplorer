@@ -14,4 +14,10 @@ class FDEDiskSideNumber(val code: UByte) {
         val SIDE_B = FDEDiskSideNumber(FDEUByteHelper.ONE)
         val UNKNOWN = {c: UByte -> FDEDiskSideNumber(c) }
     }
+
+    override fun toString()= when (code) {
+        FDEUByteHelper.ZERO -> "A"
+        FDEUByteHelper.ONE -> "B"
+        else -> ("$code?")
+    }
 }

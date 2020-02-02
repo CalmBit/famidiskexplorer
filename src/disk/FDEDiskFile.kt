@@ -48,7 +48,7 @@ class FDEDiskFile {
 
                 if(!stream.hasEnded()) {
                     val garb = FDEGarbageSide()
-                    garb.data = stream.getRemaining()
+                    garb.pile.data = stream.getRemaining()
                     file.sides = file.sides.plus(garb)
                 }
             }

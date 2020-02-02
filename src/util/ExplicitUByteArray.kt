@@ -20,7 +20,7 @@ class ExplicitUByteArray(val size: Int, arr: UByteArray) {
     }
 
     override fun toString(): String {
-        return "{" + _internal.joinToString(",") { b -> b.toString(16) } + "}"
+        return "{" + _internal.joinToString(",") { b -> "0x${String.format("%02x", b.toInt())}" } + "}"
     }
 
     fun toLegibleStr(): String {

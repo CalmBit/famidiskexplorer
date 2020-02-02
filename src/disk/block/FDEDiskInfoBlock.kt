@@ -1,5 +1,6 @@
 package disk.block
 
+import FDEPriceValue
 import disk.*
 import util.BCDInt
 import util.ByteParseStream
@@ -7,7 +8,7 @@ import util.ExplicitUByteArray
 
 class FDEDiskInfoBlock : FDEDiskBlock(FDEDiskBlockType.INFO) {
     var verified: Boolean = false
-    var manufacturerCode: UByte = 0u
+    var manufacturerCode: FDEManufacturerCode? = null
     var gameName: FDEGameName? = null
     var gameType: FDEGameType = FDEGameType.NORMAL
     var gameRevision: UByte = 0u
@@ -19,7 +20,7 @@ class FDEDiskInfoBlock : FDEDiskBlock(FDEDiskBlockType.INFO) {
     var bootFile: UByte = 0u
     var unknown2: ExplicitUByteArray = ExplicitUByteArray(5)
     var manufacturingDate: FDEDiskDate? = null
-    var countryCode: UByte = 0u
+    var countryCode: FDECountryCode? = null
     var unknown3: UByte = 0u
     var unknown4: UByte = 0u
     var unknown5: ExplicitUByteArray = ExplicitUByteArray(2)
@@ -33,14 +34,16 @@ class FDEDiskInfoBlock : FDEDiskBlock(FDEDiskBlockType.INFO) {
     var actualSide: FDEDiskSideNumber =
         FDEDiskSideNumber.SIDE_A
     var unknown10: UByte = 0u
-    var price: UByte = 0u
+    var price: FDEPriceValue? = null
+
+    override fun toString() = "Info Block"
 
     companion object {
         val VERIFICATION_CODE = ubyteArrayOf(0x2Au, 0x4Eu, 0x49u, 0x4Eu, 0x54u, 0x45u, 0x4Eu, 0x44u, 0x4Fu, 0x2Du, 0x48u, 0x56u, 0x43u, 0x2Au)
         fun parseFromBytes(stream: ByteParseStream): FDEDiskInfoBlock {
             val blockHeader = stream.getByte()
             if(blockHeader != (0x01u).toUByte())
-                throw Exception("Invalid block when block info was expected! (Expected: 0x01 | Recieved: ${blockHeader.toString(16)})")
+                throw Exception("Invalid block when block info was expected! (Expected: 0x01 | Recieved: 0x${String.format("%02x", blockHeader.toInt())})")
 
             val block = FDEDiskInfoBlock()
             val verifyCheck = stream.getBytes(14)
@@ -51,7 +54,7 @@ class FDEDiskInfoBlock : FDEDiskBlock(FDEDiskBlockType.INFO) {
                     break
                 }
             }
-            block.manufacturerCode = stream.getByte()
+            block.manufacturerCode = FDEManufacturerCode.fromByte(stream.getByte())
             block.gameName = FDEGameName(stream.getBytes(3))
             block.gameType = FDEGameType.fromByte(stream.getByte())
             block.gameRevision = stream.getByte()
@@ -63,7 +66,7 @@ class FDEDiskInfoBlock : FDEDiskBlock(FDEDiskBlockType.INFO) {
             block.unknown2 = stream.getBytesExplicit(5)
             block.manufacturingDate =
                 FDEDiskDate(stream.getByteAsBCD(), stream.getByteAsBCD(), stream.getByteAsBCD())
-            block.countryCode = stream.getByte()
+            block.countryCode = FDECountryCode.fromByte(stream.getByte())
             block.unknown3 = stream.getByte()
             block.unknown4 = stream.getByte()
             block.unknown5 = stream.getBytesExplicit(2)
@@ -77,7 +80,7 @@ class FDEDiskInfoBlock : FDEDiskBlock(FDEDiskBlockType.INFO) {
             block.rewriteCount = stream.getByteAsBCD()
             block.actualSide = FDEDiskSideNumber.fromByte(stream.getByte())
             block.unknown10 = stream.getByte()
-            block.price = stream.getByte()
+            block.price = FDEPriceValue(stream.getByte(), block.rewriteCount.asInt() != 0)
             return block
         }
     }

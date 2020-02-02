@@ -16,4 +16,6 @@ class FDEFileBlockPair {
             return pair
         }
     }
+
+    override fun toString() = header.fileName?.toString() ?: "UNKNOWN FILE NAME"
 }

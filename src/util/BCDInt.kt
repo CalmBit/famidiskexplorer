@@ -22,5 +22,5 @@ class BCDInt(private var byte: UByte) {
         return _internalByte
     }
 
-
+    override fun toString() = _internalInt.toString()
 }

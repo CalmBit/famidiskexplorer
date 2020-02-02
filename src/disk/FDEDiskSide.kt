@@ -25,4 +25,6 @@ open class FDEDiskSide {
             return side
         }
     }
+
+    override fun toString()= "Disk ${info.diskNumber}, Side ${info.sideNumber}"
 }
