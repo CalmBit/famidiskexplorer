@@ -26,4 +26,12 @@ class ExplicitUByteArray(val size: Int, arr: UByteArray) {
     fun toLegibleStr(): String {
         return _internal.joinToString("") { b -> b.toByte().toChar().toString() }
     }
+
+    fun toMZString(): String {
+        return MZEncoding.fromUByteArray(_internal)
+    }
+
+    fun get(i: Int): UByte {
+        return _internal[i]
+    }
 }

@@ -17,7 +17,8 @@ abstract class FDEOpenAction : AbstractAction("Open") {
     override fun actionPerformed(e: ActionEvent?) {
         if(e?.source is Component) {
             FDEWindow.chooser.showOpenDialog(e.source as Component)
-            doSomethingWithFile(FDEWindow.chooser.selectedFile)
+            if(FDEWindow.chooser.selectedFile != null)
+                doSomethingWithFile(FDEWindow.chooser.selectedFile)
         }
     }
 

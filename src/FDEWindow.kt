@@ -5,6 +5,7 @@ import disk.block.FDEDiskDataBlock
 import disk.block.FDEDiskHeaderBlock
 import disk.block.FDEDiskInfoBlock
 import org.fife.ui.hex.swing.HexEditor
+import util.MZEncoding
 import java.awt.Dimension
 import java.awt.event.KeyEvent
 import java.io.ByteArrayInputStream
@@ -108,7 +109,12 @@ class FDEWindow(title: String) : JFrame() {
 
             when (obj) {
                 is FDEDiskDataBlock -> {
-                    openHexEdit(ByteArrayInputStream(obj.data.toByteArray()))
+                    /*if(obj.data.size == 224) { // TODO: Probably add more of a check then just size
+                        model.addElement(MZEncoding.fromUByteArray(obj.data))
+                        splitPane.rightComponent = valueScroll
+                    } else {*/
+                        openHexEdit(ByteArrayInputStream(obj.data.toByteArray()))
+                    //}
                 }
                 is FDEGarbageSide.FDEGarbagePile -> {
                     openHexEdit(ByteArrayInputStream(obj.data.toByteArray()))

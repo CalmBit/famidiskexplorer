@@ -36,6 +36,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.undo.*;
 
 import org.fife.ui.hex.ByteBuffer;
+import util.MZEncoding;
 
 
 /**
@@ -55,6 +56,10 @@ public class HexTableModel extends AbstractTableModel {
 	private String[] columnNames;
 	private byte[] bitBuf = new byte[16];
 	private char[] dumpColBuf;
+
+	private char[] MASTER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+			'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+			'Y', 'Z', ' ', ',', '.', '.', '®'};
 
 	/**
 	 * Cache of string values of "<code>0</code>"-"<code>ff</code>" for fast
@@ -171,7 +176,7 @@ public class HexTableModel extends AbstractTableModel {
 	 * @return The value to display.
 	 */
 	public Object getValueAt(int row, int col) {
-
+		boolean ascii = false;
 		if (col==bytesPerRow) {
 			// Get ascii dump of entire row
 			int pos = editor.cellToOffset(row, 0);
@@ -180,11 +185,19 @@ public class HexTableModel extends AbstractTableModel {
 			}
 			int count = doc.read(pos, bitBuf);
 			for (int i=0; i<count; i++) {
-				char ch = (char)bitBuf[i];
-				if (ch<0x20 || ch>0x7e) {
-					ch = '.';
+				if(ascii) {
+					char ch = (char) bitBuf[i];
+					if (ch < 0x20 || ch > 0x7e) {
+						ch = '.';
+					}
+					dumpColBuf[i] = ch;
+				} else {
+					char ch = '.';
+					if(bitBuf[i] >= 0x0 && bitBuf[i] < MASTER.length) {
+						ch = MASTER[bitBuf[i]];
+					}
+					dumpColBuf[i] = ch;
 				}
-				dumpColBuf[i] = ch;
 			}
 			return new String(dumpColBuf, 0,count);
 		}
